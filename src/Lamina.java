@@ -46,6 +46,7 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
             button.setFont(new Font("Arial", Font.BOLD, 45));
             panelBotones.add(button);
             button.addActionListener(this);
+            button.setFocusable(false);
             if (!boton.equals("=")) {
                 button.setBackground(new Color(242, 242, 242));
             } else {
@@ -114,6 +115,41 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
+        if(e.getKeyLocation() == KeyEvent.KEY_LOCATION_NUMPAD){
+            try {
+                String pulsado = e.getKeyChar()+"";
+                if ("+-*/".contains(pulsado) && !texto.getText().isEmpty()) {
+                    if (num1 == 0) {
+                        num1 = Double.parseDouble(texto.getText());
+                        operador = pulsado;
+                        texto.setText("");
+                    } else {
+                        num2 = Double.parseDouble(texto.getText());
+                        num1 = calcular(num1, num2, operador);
+                        operador = "";
+                        num2 = 0;
+                        texto.setText("");
+                    }
+                } else if ("0123456789.".contains(pulsado)) {
+                    texto.setText(texto.getText() + pulsado);
+                } else if (e.getKeyCode() == 10) {
+                    num2 = Double.parseDouble(texto.getText());
+                    texto.setText(calcular(num1, num2, operador) + "");
+                    num1 = 0;
+                    num2 = 0;
+                    operador = "";
+                } else {
+                    texto.setText("");
+                    num1 = 0;
+                    num2 = 0;
+                }
+            } catch (NullPointerException | NumberFormatException f) {
+                f.printStackTrace();
+                num1 = 0;
+                num2 = 0;
+                texto.setText("");
+            } 
+        }
     }
 
     @Override
@@ -121,39 +157,6 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
     }
 
     @Override
-    public void keyTyped(KeyEvent e) {
-        try {
-            String pulsado = e.get;
-            if ("+-*/".contains(pulsado) && !texto.getText().isEmpty()) {
-                if (num1 == 0) {
-                    num1 = Double.parseDouble(texto.getText());
-                    operador = pulsado;
-                    texto.setText("");
-                } else {
-                    num2 = Double.parseDouble(texto.getText());
-                    num1 = calcular(num1, num2, operador);
-                    operador = "";
-                    num2 = 0;
-                    texto.setText("");
-                }
-            } else if ("0123456789.".contains(pulsado)) {
-                texto.setText(texto.getText() + pulsado);
-            } else if (pulsado.equals("=")) {
-                num2 = Double.parseDouble(texto.getText());
-                texto.setText(calcular(num1, num2, operador) + "");
-                num1 = 0;
-                num2 = 0;
-                operador = "";
-            } else {
-                texto.setText("");
-                num1 = 0;
-                num2 = 0;
-            }
-        } catch (NullPointerException | NumberFormatException f) {
-            f.printStackTrace();
-            num1 = 0;
-            num2 = 0;
-            texto.setText("");
-        }
+    public void keyTyped(KeyEvent e) {        
     }
 }
