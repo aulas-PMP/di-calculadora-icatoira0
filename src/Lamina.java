@@ -58,39 +58,24 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        try {
-            String pulsado = e.getActionCommand();
-            if ("+-*/".contains(pulsado) && !texto.getText().isEmpty()) {
-                if (num1 == 0) {
-                    num1 = Double.parseDouble(texto.getText());
-                    operador = pulsado;
-                    texto.setText("");
-                } else {
-                    num2 = Double.parseDouble(texto.getText());
-                    num1 = calcular(num1, num2, operador);
-                    operador = "";
-                    num2 = 0;
-                    texto.setText("");
-                }
-            } else if ("0123456789.".contains(pulsado)) {
-                texto.setText(texto.getText() + pulsado);
-            } else if (pulsado.equals("=")) {
-                num2 = Double.parseDouble(texto.getText());
-                texto.setText(calcular(num1, num2, operador) + "");
-                num1 = 0;
-                num2 = 0;
-                operador = "";
-            } else {
-                texto.setText("");
-                num1 = 0;
-                num2 = 0;
-            }
-        } catch (NullPointerException | NumberFormatException f) {
-            f.printStackTrace();
-            num1 = 0;
-            num2 = 0;
-            texto.setText("");
+        String pulsado = e.getActionCommand();
+        insertar(pulsado,pulsado=="=");
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyLocation() == KeyEvent.KEY_LOCATION_NUMPAD) {
+            String pulsado = e.getKeyChar() + "";
+            insertar(pulsado, e.getKeyCode()==10);
         }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
     }
 
     private static double calcular(double num1, double num2, String operador) {
@@ -108,60 +93,51 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
             case "/":
                 resultado = num1 / num2;
                 break;
+            case "":
+                resultado = 0;
+                break;
         }
         return resultado;
     }
 
-    @Override
-    public void keyPressed(KeyEvent e) {
-        if (e.getKeyLocation() == KeyEvent.KEY_LOCATION_NUMPAD) {
-            try {
-                String pulsado = e.getKeyChar() + "";
-                if ("+-*/".contains(pulsado) && !texto.getText().isEmpty()) {
-                    if (num1 == 0) {
-                        num1 = Double.parseDouble(texto.getText());
-                        operador = pulsado;
-                        texto.setText("");
-                    } else {
-                        num2 = Double.parseDouble(texto.getText());
-                        num1 = calcular(num1, num2, operador);
-                        operador = "";
-                        num2 = 0;
-                        texto.setText("");
-                    }
-                } else if ("0123456789.".contains(pulsado)) {
-                    if (!pulsado.equals(".")) {
-                        texto.setText(texto.getText() + pulsado);
-                    } else {
-                        if (!texto.getText().contains(".")) {
-                            texto.setText(texto.getText() + pulsado);
-                        }
-                    }
-                } else if (e.getKeyCode() == 10) {
-                    num2 = Double.parseDouble(texto.getText());
-                    texto.setText(calcular(num1, num2, operador) + "");
-                    num1 = 0;
-                    num2 = 0;
-                    operador = "";
-                } else {
+    private void insertar(String pulsado, boolean introPad){
+        try {
+            texto.setForeground(Color.BLACK);
+            if ("+-*/".contains(pulsado) && !texto.getText().isEmpty()) {
+                if (num1 == 0) {
+                    num1 = Double.parseDouble(texto.getText());
+                    operador = pulsado;
                     texto.setText("");
-                    num1 = 0;
+                } else {
+                    num2 = Double.parseDouble(texto.getText());
+                    num1 = calcular(num1, num2, operador);
+                    operador = "";
                     num2 = 0;
+                    texto.setText("");
                 }
-            } catch (NullPointerException | NumberFormatException f) {
-                f.printStackTrace();
+            } else if ("0123456789.".contains(pulsado)) {
+                texto.setText(texto.getText() + pulsado);
+            } else if (introPad) {
+                num2 = Double.parseDouble(texto.getText());
+                texto.setText(calcular(num1, num2, operador) + "");
+                if (Double.parseDouble(texto.getText())<0) {
+                    texto.setForeground(Color.RED);
+                }
                 num1 = 0;
                 num2 = 0;
+                operador = "";
+            } else if(texto.getText().isEmpty() && pulsado.equals("-")){
+                texto.setText(pulsado);
+            }else {
                 texto.setText("");
+                num1 = 0;
+                num2 = 0;
             }
+        } catch (NullPointerException | NumberFormatException f) {
+            f.printStackTrace();
+            num1 = 0;
+            num2 = 0;
+            texto.setText("");
         }
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
     }
 }

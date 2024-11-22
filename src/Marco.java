@@ -25,7 +25,7 @@ public class Marco extends JFrame{
 
         Lamina lamina = new Lamina();
         add(lamina);
-
+        
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
