@@ -48,10 +48,12 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
             button.setFocusable(false);
             if (!boton.equals("=")) {
                 button.setBackground(new Color(242, 242, 242));
+                
             } else {
                 button.setBackground(new Color(255, 108, 0));
             }
         }
+        
         panelBotones.setBackground(new Color(188, 188, 188));
         return panelBotones;
     }
@@ -116,10 +118,24 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
                     texto.setText("");
                 }
             } else if ("0123456789.".contains(pulsado)) {
-                texto.setText(texto.getText() + pulsado);
+                if (pulsado.equals(".")) {
+                    if (!texto.getText().contains(".")) {
+                        texto.setText(texto.getText() + pulsado);
+                    }
+                }else{
+                    texto.setText(texto.getText() + pulsado);
+                }
             } else if (introPad) {
                 num2 = Double.parseDouble(texto.getText());
-                texto.setText(calcular(num1, num2, operador) + "");
+                String resultado = calcular(num1, num2, operador)+"";
+                
+                if (resultado.endsWith(".0")) {
+                    resultado = resultado.replace(".0", "");
+                    texto.setText(resultado);
+                }else{
+                    texto.setText(resultado);
+                }
+
                 if (Double.parseDouble(texto.getText())<0) {
                     texto.setForeground(Color.RED);
                 }
@@ -133,8 +149,8 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
                 num1 = 0;
                 num2 = 0;
             }
-        } catch (NullPointerException | NumberFormatException f) {
-            f.printStackTrace();
+        } catch (NullPointerException | NumberFormatException e) {
+            e.printStackTrace();
             num1 = 0;
             num2 = 0;
             texto.setText("");
