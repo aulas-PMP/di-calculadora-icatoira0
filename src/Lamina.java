@@ -8,25 +8,35 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 public class Lamina extends JPanel implements ActionListener, KeyListener {
-
+    JTextField datoAlmacenado = new JTextField();
     JTextField texto = new JTextField();
 
     private double num1 = 0;
     private double num2 = 0;
     private String operador = "";
+    private boolean recienCalc = false;
 
     public Lamina() {
-        setLayout(new BorderLayout());
+
+        datoAlmacenado.setHorizontalAlignment(SwingConstants.RIGHT);
+        datoAlmacenado.setFont(new Font("Arial", Font.BOLD, 50));
+        datoAlmacenado.setEditable(false);
+        datoAlmacenado.setFocusable(false);
+        add(datoAlmacenado);
+
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         texto.setHorizontalAlignment(SwingConstants.RIGHT);
-        texto.setFont(new Font("Arial", Font.BOLD, 80));
+        texto.setFont(new Font("Arial", Font.BOLD, 50));
         texto.setEditable(false);
-        add(texto, BorderLayout.NORTH);
+        add(texto);
+
         JPanel botones = crearPanel();
         add(botones);
         texto.addKeyListener(this);
@@ -48,12 +58,12 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
             button.setFocusable(false);
             if (!boton.equals("=")) {
                 button.setBackground(new Color(242, 242, 242));
-                
+
             } else {
                 button.setBackground(new Color(255, 108, 0));
             }
         }
-        
+
         panelBotones.setBackground(new Color(188, 188, 188));
         return panelBotones;
     }
@@ -61,14 +71,14 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         String pulsado = e.getActionCommand();
-        insertar(pulsado,pulsado=="=");
+        insertar(pulsado, pulsado == "=");
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyLocation() == KeyEvent.KEY_LOCATION_NUMPAD) {
             String pulsado = e.getKeyChar() + "";
-            insertar(pulsado, e.getKeyCode()==10);
+            insertar(pulsado, e.getKeyCode() == 10);
         }
     }
 
@@ -102,52 +112,79 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
         return resultado;
     }
 
-    private void insertar(String pulsado, boolean introPad){
+    private void insertar(String pulsado, boolean introPad) {
         try {
             texto.setForeground(Color.BLACK);
+            String dato ="";
             if ("+-*/".contains(pulsado) && !texto.getText().isEmpty()) {
                 if (num1 == 0) {
                     num1 = Double.parseDouble(texto.getText());
                     operador = pulsado;
+
+                    dato = num1 + "";
+                    if (dato.endsWith(".0")) {
+                        dato = dato.replace(".0", "");
+                    }
+                    datoAlmacenado.setText(dato);
+
                     texto.setText("");
                 } else {
                     num2 = Double.parseDouble(texto.getText());
                     num1 = calcular(num1, num2, operador);
+
+                    dato = num1 + "";
+                    if (dato.endsWith(".0")) {
+                        dato = dato.replace(".0", "");
+                    }
+                    datoAlmacenado.setText(dato);
+
                     operador = "";
                     num2 = 0;
                     texto.setText("");
                 }
             } else if ("0123456789.".contains(pulsado)) {
+                if (recienCalc) {
+                    texto.setText("");
+                    datoAlmacenado.setText("");
+                }
+                
                 if (pulsado.equals(".")) {
                     if (!texto.getText().contains(".")) {
                         texto.setText(texto.getText() + pulsado);
                     }
-                }else{
+                } else {
                     texto.setText(texto.getText() + pulsado);
                 }
             } else if (introPad) {
                 num2 = Double.parseDouble(texto.getText());
-                String resultado = calcular(num1, num2, operador)+"";
-                
+                String resultado = calcular(num1, num2, operador) + "";
+
                 if (resultado.endsWith(".0")) {
                     resultado = resultado.replace(".0", "");
                     texto.setText(resultado);
-                }else{
+                } else {
                     texto.setText(resultado);
                 }
 
-                if (Double.parseDouble(texto.getText())<0) {
+                dato = datoAlmacenado.getText()+ operador + num2;
+                if (dato.endsWith(".0")) {
+                    dato = dato.replace(".0", "");
+                }
+                datoAlmacenado.setText(dato);
+
+                if (Double.parseDouble(texto.getText()) < 0) {
                     texto.setForeground(Color.RED);
                 }
                 num1 = 0;
                 num2 = 0;
                 operador = "";
-            } else if(texto.getText().isEmpty() && pulsado.equals("-")){
+            } else if (texto.getText().isEmpty() && pulsado.equals("-")) {
                 texto.setText(pulsado);
-            }else {
+            } else {
                 texto.setText("");
                 num1 = 0;
                 num2 = 0;
+                datoAlmacenado.setText("");
             }
         } catch (NullPointerException | NumberFormatException e) {
             e.printStackTrace();
