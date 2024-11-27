@@ -19,7 +19,7 @@ public class Marco extends JFrame{
         int alturaPant = tamanoPant.height;
         int anchoPant = tamanoPant.width;
 
-        setTitle("Calculadora");
+        setTitle("Calculadora de Ismael");
         setSize(anchoPant / 2, 600);
         setLocation(anchoPant / 4, alturaPant / 4);
 

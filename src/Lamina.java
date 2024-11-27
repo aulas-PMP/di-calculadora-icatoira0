@@ -116,38 +116,43 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
         try {
             texto.setForeground(Color.BLACK);
             String dato ="";
-            if ("+-*/".contains(pulsado) && !texto.getText().isEmpty()) {
+            if ("+-*/".contains(pulsado) && !texto.getText().isEmpty()) {//El operador para introducir el segundo número o encadenar otra operación
                 if (num1 == 0) {
+                    //Añade el texto que haya en el texto convirtiendolo en número
                     num1 = Double.parseDouble(texto.getText());
+                    //Añade el operador de la operación que realizara
                     operador = pulsado;
-
+                    //Muestra el dato anterior en parte de ariba
                     dato = num1 + "";
                     if (dato.endsWith(".0")) {
                         dato = dato.replace(".0", "");
                     }
                     datoAlmacenado.setText(dato);
-
+                    //Limpia el texto para introducir el num2
                     texto.setText("");
-                } else {
+                }else {
+                    //Pone el texto que haya en num2 y realiza la operación dejando el 
                     num2 = Double.parseDouble(texto.getText());
                     num1 = calcular(num1, num2, operador);
-
+                    //Muestra el resultado de la operación anterior en parte de arriba
                     dato = num1 + "";
                     if (dato.endsWith(".0")) {
                         dato = dato.replace(".0", "");
                     }
                     datoAlmacenado.setText(dato);
-
-                    operador = "";
+                    //Limpia el num2 y pone el operador para la nueva suma
+                    operador = pulsado;
                     num2 = 0;
                     texto.setText("");
                 }
-            } else if ("0123456789.".contains(pulsado)) {
+            }else if ("0123456789.".contains(pulsado)) {//Poner un número en la pantalla
+                //Comprueba que si se hizo una operación recientemente y Limpia la operación de la pantalla
                 if (recienCalc) {
                     texto.setText("");
                     datoAlmacenado.setText("");
+                    recienCalc = false;
                 }
-                
+                //Si se quiere poner un . se comprueba si ya hay alguno escrito y si no hay lo pone
                 if (pulsado.equals(".")) {
                     if (!texto.getText().contains(".")) {
                         texto.setText(texto.getText() + pulsado);
@@ -155,10 +160,13 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
                 } else {
                     texto.setText(texto.getText() + pulsado);
                 }
-            } else if (introPad) {
+            }else if (introPad) {//Si el bóton o tecla pulsado es = o Intro
+                //Guarda el num2 y calcula, generando un resultado además de poner el recienCalc en true
                 num2 = Double.parseDouble(texto.getText());
                 String resultado = calcular(num1, num2, operador) + "";
+                recienCalc = true;
 
+                //Si el resultado no tiene decimales quita el .0
                 if (resultado.endsWith(".0")) {
                     resultado = resultado.replace(".0", "");
                     texto.setText(resultado);
@@ -166,21 +174,23 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
                     texto.setText(resultado);
                 }
 
+                //Si el num2 no tiene decimales quita el .0 y despues lo muestra arriba
                 dato = datoAlmacenado.getText()+ operador + num2;
                 if (dato.endsWith(".0")) {
                     dato = dato.replace(".0", "");
                 }
                 datoAlmacenado.setText(dato);
 
+                //Si el resultado es negativo cambia el color a Rojo
                 if (Double.parseDouble(texto.getText()) < 0) {
                     texto.setForeground(Color.RED);
                 }
                 num1 = 0;
                 num2 = 0;
                 operador = "";
-            } else if (texto.getText().isEmpty() && pulsado.equals("-")) {
+            }else if (texto.getText().isEmpty() && pulsado.equals("-")) {//Poner - para números negativos
                 texto.setText(pulsado);
-            } else {
+            }else{
                 texto.setText("");
                 num1 = 0;
                 num2 = 0;
