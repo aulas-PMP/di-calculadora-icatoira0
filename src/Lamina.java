@@ -271,6 +271,9 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
         }
     }
 
+    /**
+     * Cambia el modo de entrada para que solo se pueda usar el teclado
+     */
     private void modoTeclado() {
         Component[] botonesNum = panelNum.getComponents();
         Component[] botonesOp = panelOp.getComponents();
@@ -286,6 +289,9 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
         }
     }
 
+    /**
+     * Cambia el modo de entrada para que solo se pueda usar el raton
+     */
     private void modoRaton() {
         Component[] botonesNum = panelNum.getComponents();
         Component[] botonesOp = panelOp.getComponents();
@@ -303,6 +309,9 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
         texto.removeKeyListener(this);
     }
 
+    /**
+     * Cambia el modo de entrada en el que se puede usar el raton y el teclado
+     */
     private void modoLibre() {
         Component[] botonesNum = panelNum.getComponents();
         Component[] botonesOp = panelOp.getComponents();
