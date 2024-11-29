@@ -10,10 +10,11 @@ import java.awt.event.WindowListener;
  * 
  * @author Ismael Catoira Rial
  */
-public class Marco extends JFrame implements WindowListener{
+public class Marco extends JFrame implements WindowListener {
 
+    /** Lamina que contiene la calculadora */
     private Lamina lamina;
-    
+
     /**
      * Constructor paramétrizado
      */
@@ -40,17 +41,17 @@ public class Marco extends JFrame implements WindowListener{
 
     @Override
     public void windowActivated(WindowEvent e) {
-        
+
     }
 
     @Override
     public void windowClosed(WindowEvent e) {
-        
+
     }
 
     @Override
     public void windowClosing(WindowEvent e) {
-        
+
     }
 
     @Override
@@ -60,16 +61,16 @@ public class Marco extends JFrame implements WindowListener{
 
     @Override
     public void windowDeiconified(WindowEvent e) {
-        
+
     }
 
     @Override
     public void windowIconified(WindowEvent e) {
-        
+
     }
 
     @Override
     public void windowOpened(WindowEvent e) {
-        
+
     }
 }

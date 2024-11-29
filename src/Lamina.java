@@ -1,7 +1,6 @@
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,16 +13,30 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+/**
+ * Clase que contiene la calculadora y la lógica de esta
+ * 
+ * @author Ismael Catoira Rial
+ */
 public class Lamina extends JPanel implements ActionListener, KeyListener {
+    /** Campo de texto que guarda el dato anterior */
     JTextField datoAlmacenado = new JTextField();
+    /** Campo de texto donde se introduciran los números */
     JTextField texto = new JTextField();
+    /** Botón para cambiar el tipo de como introduciremos los datos */
     JButton cambioEntrada;
+    /** Panel que contiene los botones númericos */
     JPanel panelOp;
+    /** Panel que contiene los botones de operadores */
     JPanel panelNum;
 
+    /** Número 1 de la operación a realiazar */
     private double num1 = 0;
+    /** Números 2 de la operación a realizar */
     private double num2 = 0;
+    /** Operador para saber que operación se esta realizando */
     private String operador = "";
+    /** Si se acaba de hacer un calculo */
     private boolean recienCalc = false;
 
     public Lamina() {
@@ -31,6 +44,7 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBackground(new Color(188, 188, 188));
 
+        // Creación del botón para cambiar el tipo de entrada
         cambioEntrada = new JButton("Libre");
         cambioEntrada.setFont(new Font("Arial", Font.BOLD, 45));
         cambioEntrada.setBackground(new Color(242, 242, 242));
@@ -60,10 +74,6 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
         modoLibre();
     }
 
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-    }
-
     /**
      * Crea el panel que contiene a los 2 paneles con los botones de la calculadora
      * 
@@ -82,6 +92,11 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
         return panelBotones;
     }
 
+    /**
+     * Crea el panel que contiene los botones
+     * 
+     * @return El panel creado
+     */
     private JPanel crearPanelNum() {
         JPanel panelNum = new JPanel();
         panelNum.setLayout(new GridLayout(4, 3, 6, 6));
@@ -97,6 +112,11 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
         return panelNum;
     }
 
+    /**
+     * Crea el panel que contine los operadores
+     * 
+     * @return El panel creado
+     */
     private JPanel crearPanelOp() {
         JPanel panelNum = new JPanel();
         panelNum.setLayout(new GridLayout(2, 3, 6, 6));
@@ -152,6 +172,14 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
     public void keyTyped(KeyEvent e) {
     }
 
+    /**
+     * Realiza la operación
+     * 
+     * @param num1     Número 1 usado en la operación
+     * @param num2     Número 2 usado en la operación
+     * @param operador Operador para determinar que operación se realiza
+     * @return El resultado de la operación
+     */
     private static double calcular(double num1, double num2, String operador) {
         double resultado;
         switch (operador) {
@@ -174,12 +202,18 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
         return resultado;
     }
 
+    /**
+     * Método con el que añadimos números o limpiamos el texto cuano clicamos un
+     * botón o pulsamos una tecla
+     * 
+     * @param pulsado  El valor en formato String pulsado
+     * @param introPad Si el valor pulsado fue Intro o el botón "="
+     */
     private void insertar(String pulsado, boolean introPad) {
         try {
             texto.setForeground(Color.BLACK);
             String dato = "";
-            if ("+-*/".contains(pulsado) && !texto.getText().isEmpty()) {// El operador para introducir el segundo
-                                                                         // número o encadenar otra operación
+            if ("+-*/".contains(pulsado) && !texto.getText().isEmpty()) {
                 if (num1 == 0) {
                     // Añade el texto que haya en el texto convirtiendolo en número
                     num1 = Double.parseDouble(texto.getText());
@@ -209,7 +243,7 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
                     num2 = 0;
                     texto.setText("");
                 }
-            } else if ("0123456789.".contains(pulsado)) {// Poner un número en la pantalla
+            } else if ("0123456789.".contains(pulsado)) {
                 // Comprueba que si se hizo una operación recientemente y Limpia la operación de
                 // la pantalla
                 if (recienCalc) {
@@ -226,10 +260,10 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
                 } else {
                     texto.setText(texto.getText() + pulsado);
                 }
-            } else if (introPad) {// Si el bóton o tecla pulsado es = o Intro
+            } else if (introPad) {
+                // Si no es un igual despues de hacer una operación
                 if (!recienCalc) {
-                    // Guarda el num2 y calcula, generando un resultado además de poner el
-                    // recienCalc en true
+                    // Guarda el num2 y calcula
                     num2 = Double.parseDouble(texto.getText());
                     String resultado = calcular(num1, num2, operador) + "";
                     recienCalc = true;
@@ -260,9 +294,11 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
                     texto.setText("");
                     datoAlmacenado.setText("");
                 }
-            } else if (texto.getText().isEmpty() && pulsado.equals("-")) {// Poner - para números negativos
+            } else if (texto.getText().isEmpty() && pulsado.equals("-")) {
+                // Poner - para números negativos
                 texto.setText(pulsado);
             } else {
+                // Limpia el texto si es algo que no reconoce
                 texto.setText("");
                 num1 = 0;
                 num2 = 0;
