@@ -30,6 +30,7 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
         // Cambiamos el tipo de Layout del panel principal
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBackground(new Color(188, 188, 188));
+
         cambioEntrada = new JButton("Libre");
         cambioEntrada.setFont(new Font("Arial", Font.BOLD, 45));
         cambioEntrada.setBackground(new Color(242, 242, 242));
@@ -37,7 +38,6 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
         add(cambioEntrada);
         cambioEntrada.setAlignmentX(Component.CENTER_ALIGNMENT);
         cambioEntrada.addActionListener(this);
-
 
         // Creación del JTextField que almacenara el dato anterior
         datoAlmacenado.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -122,14 +122,14 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
         String pulsado = e.getActionCommand();
         if (!"Libre Teclado Ratón".contains(pulsado)) {
             insertar(pulsado, pulsado.equals("="));
-        }else{
+        } else {
             if (pulsado.equals("Libre")) {
                 modoTeclado();
                 cambioEntrada.setText("Teclado");
-            }else if (pulsado.equals("Teclado")) {
+            } else if (pulsado.equals("Teclado")) {
                 modoRaton();
                 cambioEntrada.setText("Ratón");
-            }else{
+            } else {
                 modoLibre();
                 cambioEntrada.setText("Libre");
             }
@@ -227,34 +227,39 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
                     texto.setText(texto.getText() + pulsado);
                 }
             } else if (introPad) {// Si el bóton o tecla pulsado es = o Intro
-                // Guarda el num2 y calcula, generando un resultado además de poner el
-                // recienCalc en true
-                num2 = Double.parseDouble(texto.getText());
-                String resultado = calcular(num1, num2, operador) + "";
-                recienCalc = true;
+                if (!recienCalc) {
+                    // Guarda el num2 y calcula, generando un resultado además de poner el
+                    // recienCalc en true
+                    num2 = Double.parseDouble(texto.getText());
+                    String resultado = calcular(num1, num2, operador) + "";
+                    recienCalc = true;
 
-                // Si el resultado no tiene decimales quita el .0
-                if (resultado.endsWith(".0")) {
-                    resultado = resultado.replace(".0", "");
-                    texto.setText(resultado);
+                    // Si el resultado no tiene decimales quita el .0
+                    if (resultado.endsWith(".0")) {
+                        resultado = resultado.replace(".0", "");
+                        texto.setText(resultado);
+                    } else {
+                        texto.setText(resultado);
+                    }
+
+                    // Si el num2 no tiene decimales quita el .0 y despues lo muestra arriba
+                    dato = datoAlmacenado.getText() + operador + num2;
+                    if (dato.endsWith(".0")) {
+                        dato = dato.replace(".0", "");
+                    }
+                    datoAlmacenado.setText(dato);
+
+                    // Si el resultado es negativo cambia el color a Rojo
+                    if (Double.parseDouble(texto.getText()) < 0) {
+                        texto.setForeground(Color.RED);
+                    }
+                    num1 = 0;
+                    num2 = 0;
+                    operador = "";
                 } else {
-                    texto.setText(resultado);
+                    texto.setText("");
+                    datoAlmacenado.setText("");
                 }
-
-                // Si el num2 no tiene decimales quita el .0 y despues lo muestra arriba
-                dato = datoAlmacenado.getText() + operador + num2;
-                if (dato.endsWith(".0")) {
-                    dato = dato.replace(".0", "");
-                }
-                datoAlmacenado.setText(dato);
-
-                // Si el resultado es negativo cambia el color a Rojo
-                if (Double.parseDouble(texto.getText()) < 0) {
-                    texto.setForeground(Color.RED);
-                }
-                num1 = 0;
-                num2 = 0;
-                operador = "";
             } else if (texto.getText().isEmpty() && pulsado.equals("-")) {// Poner - para números negativos
                 texto.setText(pulsado);
             } else {
@@ -264,7 +269,6 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
                 datoAlmacenado.setText("");
             }
         } catch (NullPointerException | NumberFormatException e) {
-            e.printStackTrace();
             num1 = 0;
             num2 = 0;
             texto.setText("");
@@ -329,5 +333,16 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
         }
 
         texto.addKeyListener(this);
+    }
+
+    /**
+     * Limpia los datos de todo
+     */
+    public void limpiar() {
+        texto.setText("");
+        datoAlmacenado.setText("");
+        num1 = 0;
+        num2 = 0;
+        operador = "";
     }
 }
