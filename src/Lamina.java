@@ -100,7 +100,7 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
     private JPanel crearPanelNum() {
         JPanel panelNum = new JPanel();
         panelNum.setLayout(new GridLayout(4, 3, 6, 6));
-        String[] botones = { "7", "8", "9", "4", "5", "6", "1", "2", "3", "0", "." };
+        String[] botones = { "7", "8", "9", "4", "5", "6", "1", "2", "3", "0", "," };
         for (String boton : botones) {
             JButton button = new JButton(boton);
             button.setFont(new Font("Arial", Font.BOLD, 45));
@@ -216,13 +216,14 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
             if ("+-*/".contains(pulsado) && !texto.getText().isEmpty()) {
                 if (num1 == 0) {
                     // Añade el texto que haya en el texto convirtiendolo en número
-                    num1 = Double.parseDouble(texto.getText());
+                    num1 = Double.parseDouble(texto.getText().replace(",", "."));
                     // Añade el operador de la operación que realizara
                     operador = pulsado;
                     // Muestra el dato anterior en parte de ariba
                     dato = num1 + "";
-                    if (dato.endsWith(".0")) {
-                        dato = dato.replace(".0", "");
+                    dato = dato.replace(".", ",");
+                    if (dato.endsWith(",0")) {
+                        dato = dato.replace(",0", "");
                     }
                     recienCalc = false;
                     datoAlmacenado.setText(dato);
@@ -230,12 +231,13 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
                     texto.setText("");
                 } else {
                     // Pone el texto que haya en num2 y realiza la operación dejando el
-                    num2 = Double.parseDouble(texto.getText());
+                    num2 = Double.parseDouble(texto.getText().replace(",", "."));
                     num1 = calcular(num1, num2, operador);
                     // Muestra el resultado de la operación anterior en parte de arriba
                     dato = num1 + "";
-                    if (dato.endsWith(".0")) {
-                        dato = dato.replace(".0", "");
+                    dato = dato.replace(".", ",");
+                    if (dato.endsWith(",0")) {
+                        dato = dato.replace(",0", "");
                     }
                     datoAlmacenado.setText(dato);
                     // Limpia el num2 y pone el operador para la nueva suma
@@ -243,7 +245,7 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
                     num2 = 0;
                     texto.setText("");
                 }
-            } else if ("0123456789.".contains(pulsado)) {
+            } else if ("0123456789,.".contains(pulsado)) {
                 // Comprueba que si se hizo una operación recientemente y Limpia la operación de
                 // la pantalla
                 if (recienCalc) {
@@ -251,11 +253,11 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
                     datoAlmacenado.setText("");
                     recienCalc = false;
                 }
-                // Si se quiere poner un . se comprueba si ya hay alguno escrito y si no hay lo
+                // Si se quiere poner una "," se comprueba si ya hay alguno escrito y si no hay lo
                 // pone
-                if (pulsado.equals(".")) {
-                    if (!texto.getText().contains(".")) {
-                        texto.setText(texto.getText() + pulsado);
+                if (pulsado.equals(".") || pulsado.equals(",")) {
+                    if (!texto.getText().contains(",")) {
+                        texto.setText(texto.getText() + ",");
                     }
                 } else {
                     texto.setText(texto.getText() + pulsado);
@@ -264,13 +266,14 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
                 // Si no es un igual despues de hacer una operación
                 if (!recienCalc) {
                     // Guarda el num2 y calcula
-                    num2 = Double.parseDouble(texto.getText());
+                    num2 = Double.parseDouble(texto.getText().replace(",", "."));
                     String resultado = calcular(num1, num2, operador) + "";
+                    resultado = resultado.replace(".", ",");
                     recienCalc = true;
 
                     // Si el resultado no tiene decimales quita el .0
-                    if (resultado.endsWith(".0")) {
-                        resultado = resultado.replace(".0", "");
+                    if (resultado.endsWith(",0")) {
+                        resultado = resultado.replace(",0", "");
                         texto.setText(resultado);
                     } else {
                         texto.setText(resultado);
@@ -278,13 +281,14 @@ public class Lamina extends JPanel implements ActionListener, KeyListener {
 
                     // Si el num2 no tiene decimales quita el .0 y despues lo muestra arriba
                     dato = datoAlmacenado.getText() + operador + num2;
-                    if (dato.endsWith(".0")) {
-                        dato = dato.replace(".0", "");
+                    dato = dato.replace(".", ",");
+                    if (dato.endsWith(",0")) {
+                        dato = dato.replace(",0", "");
                     }
                     datoAlmacenado.setText(dato);
 
                     // Si el resultado es negativo cambia el color a Rojo
-                    if (Double.parseDouble(texto.getText()) < 0) {
+                    if (Double.parseDouble(texto.getText().replace(",", ".")) < 0) {
                         texto.setForeground(Color.RED);
                     }
                     num1 = 0;
